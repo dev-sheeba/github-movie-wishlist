@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/sort"
+        android:title="Sort"
+        android:icon="@drawable/ic_sort"
+        android:iconTint="@color/white"
+        app:showAsAction="always">
+
+        <menu>
+            <group>
+                <item
+                    android:id="@+id/sort_by_movies"
+                    android:title="Sort by movies"/>
+                <item
+                    android:id="@+id/sort_by_pending"
+                    android:title="Sort by pending"/>
+                <item
+                    android:id="@+id/sort_by_watched"
+                    android:title="Sort by watched"/>
+                <item
+                    android:id="@+id/sort_by_favourites"
+                    android:title="Sort by favourites"/>
+
+            </group>
+
+
+        </menu>
+    </item>
+
+    <item
+        android:id="@+id/clear_watched"
+        android:title="Clear Watched"
+        app:showAsAction="never"/>
+
+</menu>
