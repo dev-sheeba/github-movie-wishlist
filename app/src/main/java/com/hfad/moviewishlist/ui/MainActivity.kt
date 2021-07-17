@@ -5,13 +5,12 @@ import android.widget.FrameLayout
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.moviewishlist.R
 import com.hfad.moviewishlist.databinding.ActivityMainBinding
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClickListener {
 
     private lateinit var binding: ActivityMainBinding
     private var fragmentContainer: FrameLayout? = null
@@ -35,9 +34,15 @@ class MainActivity : AppCompatActivity() {
 
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_container, MovieHomeFragment(toolbar))
+            .add(R.id.fragment_container, MovieHomeFragment(toolbar, this))
             .commit()
 
+    }
 
+    override fun onFabSearchClick() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, MovieSearchFragment())
+            .commit()
     }
 }
