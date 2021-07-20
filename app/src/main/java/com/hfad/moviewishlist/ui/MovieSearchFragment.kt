@@ -5,30 +5,27 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.widget.SearchView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.moviewishlist.R
 import com.hfad.moviewishlist.adapters.MovieAdapter
 import com.hfad.moviewishlist.databinding.FragmentMovieSearchBinding
-import com.hfad.moviewishlist.repository.MovieService
 import com.hfad.moviewishlist.utils.Constants.Companion.SEARCH_MOVIE_TIME_DELAY
 import com.hfad.moviewishlist.utils.Resources
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MovieSearchFragment : Fragment() {
+class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment() {
     private lateinit var binding: FragmentMovieSearchBinding
-    private lateinit var searchToolbar: MaterialToolbar
     var searchMovieJob: Job? = null
 //    private lateinit var searchAdapter: MovieAdapter
+
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory((requireActivity().application as MovieApplication).repository)
     }
@@ -41,18 +38,20 @@ class MovieSearchFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentMovieSearchBinding.inflate(layoutInflater, container, false)
 
-//        searchToolbar = binding.searchToolbar
-//        searchToolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+        ((activity as AppCompatActivity)).menuInflater.inflate(R.menu.search_bar_menu, searchToolbar.menu)
+
+        searchToolbar.setNavigationIcon(R.drawable.ic_arrow_back)
+
 
         setUpRecyclerview()
 
-        binding.searchView.addTextChangedListener {
+        binding.searchView.addTextChangedListener { editable ->
             searchMovieJob?.cancel()
             searchMovieJob = lifecycleScope.launch {
                 delay(SEARCH_MOVIE_TIME_DELAY)
-                it?.let {
-                    if (it.toString().isNotEmpty()) {
-                        viewModel.searchMovie(it.toString())
+                editable?.let {
+                    if (editable.toString().isNotEmpty()) {
+                        viewModel.searchMovie(editable.toString())
                     }
                 }
             }
@@ -68,7 +67,7 @@ class MovieSearchFragment : Fragment() {
                 is Resources.Error -> {
                     hideProgressBor()
                     response.message?.let {
-
+                        "Error occurred"
                     }
                 }
 

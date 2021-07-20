@@ -2,7 +2,7 @@ package com.hfad.moviewishlist.ui
 
 import android.app.Application
 import com.hfad.moviewishlist.db.MovieRoomDatabase
-import com.hfad.moviewishlist.repository.MovieService
+import com.hfad.moviewishlist.repository.DefaultMovieRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 
@@ -12,5 +12,5 @@ class MovieApplication: Application() {
 
     val database by lazy { MovieRoomDatabase.createDatabase(this, applicationScope) }
 
-    val repository by lazy { MovieService(database.movieDao()) }
+    val repository by lazy { DefaultMovieRepository(database.movieDao()) }
 }

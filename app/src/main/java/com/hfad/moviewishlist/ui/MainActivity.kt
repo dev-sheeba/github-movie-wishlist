@@ -15,6 +15,7 @@ class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClic
     private lateinit var binding: ActivityMainBinding
     private var fragmentContainer: FrameLayout? = null
     lateinit var toolbar: MaterialToolbar
+    lateinit var searchToolbar: MaterialToolbar
 
     private lateinit var toggle: ActionBarDrawerToggle
 
@@ -24,7 +25,12 @@ class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClic
         setContentView(binding.root)
 
         toolbar = binding.toolbar
+        searchToolbar = binding.toolbar
 
+
+        searchToolbar.setNavigationOnClickListener {
+
+        }
 
         toolbar.setNavigationOnClickListener {
             binding.drawerLayout.openDrawer(GravityCompat.START)
@@ -42,7 +48,7 @@ class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClic
     override fun onFabSearchClick() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, MovieSearchFragment())
+            .replace(R.id.fragment_container, MovieSearchFragment(searchToolbar))
             .commit()
     }
 }

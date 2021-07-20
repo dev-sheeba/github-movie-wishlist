@@ -3,19 +3,26 @@ package com.hfad.moviewishlist.model
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.annotations.SerializedName
 
 
 @Entity(tableName = "movies_table")
 data class Movie(
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    @ColumnInfo(name = "is_completed")
-    val isCompleted: Boolean,
-    @ColumnInfo(name = "isFavourite")
-    val isFavourite: Boolean,
+    @SerializedName("id")
+    val movieId: Int,
+//    @ColumnInfo(name = "is_completed")
+//    val isCompleted: Boolean,
+//    @ColumnInfo(name = "isFavourite")
+//    val isFavourite: Boolean,
+    @SerializedName("overview")
     val overview: String,
-    val poster_path: String,
-    val release_date: String,
+    @SerializedName("poster_path")
+    val posterPath: String?,
+    @SerializedName("release_date")
+    val releaseDate: String,
+    @SerializedName("title")
     val title: String,
-    val vote_average: Double
+    @SerializedName("vote_average")
+    val voteAverage: Double
 )

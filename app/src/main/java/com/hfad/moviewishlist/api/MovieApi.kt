@@ -1,6 +1,7 @@
 package com.hfad.moviewishlist.api
 
 import com.hfad.moviewishlist.model.Movie
+import com.hfad.moviewishlist.model.SearchMoviesResponse
 import com.hfad.moviewishlist.utils.Constants.Companion.API_KEY
 import retrofit2.Response
 import retrofit2.http.GET
@@ -22,5 +23,7 @@ interface MovieApi {
         searchQuery: String,
         @Query("api_key")
         apiKey: String = API_KEY
-    ): Response<List<Movie>>
+    ): Response<SearchMoviesResponse>
+
 }
+
