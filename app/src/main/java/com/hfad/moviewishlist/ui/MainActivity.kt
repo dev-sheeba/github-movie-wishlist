@@ -8,14 +8,16 @@ import androidx.core.view.GravityCompat
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.moviewishlist.R
 import com.hfad.moviewishlist.databinding.ActivityMainBinding
+import com.hfad.moviewishlist.model.Movie
 
 
-class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClickListener {
+class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClickListener, MovieSearchFragment.OnNavigateMovieItemClickListener, MovieDetailFragment.OnNavigateSAveClickListener{
 
     private lateinit var binding: ActivityMainBinding
     private var fragmentContainer: FrameLayout? = null
     lateinit var toolbar: MaterialToolbar
     lateinit var searchToolbar: MaterialToolbar
+    lateinit var detailToolbar: MaterialToolbar
 
     private lateinit var toggle: ActionBarDrawerToggle
 
@@ -26,6 +28,7 @@ class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClic
 
         toolbar = binding.toolbar
         searchToolbar = binding.toolbar
+        detailToolbar = binding.toolbar
 
 
         searchToolbar.setNavigationOnClickListener {
@@ -48,7 +51,24 @@ class MainActivity : AppCompatActivity(), MovieHomeFragment.OnNavigateSearchClic
     override fun onFabSearchClick() {
         supportFragmentManager
             .beginTransaction()
-            .replace(R.id.fragment_container, MovieSearchFragment(searchToolbar))
+            .replace(R.id.fragment_container, MovieSearchFragment(searchToolbar, this))
             .commit()
     }
+
+
+    override fun onMovieItemClick(movie: Movie) {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, MovieDetailFragment(movie, detailToolbar, this))
+            .addToBackStack(null)
+            .commit()
+    }
+
+    override fun onSaveClick() {
+        supportFragmentManager
+            .beginTransaction()
+            .replace(R.id.fragment_container, MovieHomeFragment(toolbar, this))
+            .commit()
+    }
+
 }

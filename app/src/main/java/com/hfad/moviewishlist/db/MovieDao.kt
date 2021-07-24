@@ -6,10 +6,14 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface MovieDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsert(movie: Movie) : Long
 
-    @Query("SELECT * FROM movies_table")
+    @Query("SELECT * FROM movies_table ORDER BY movieId ASC")
+    fun readAllData(): Flow<List<Movie>>
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun upsert(movie: Movie)
+
+    @Query("SELECT * FROM movies_table ORDER BY is_completed ASC, movieId DESC")
     fun getAllMovies(): Flow<List<Movie>>
 
     @Delete

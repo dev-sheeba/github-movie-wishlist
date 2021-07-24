@@ -13,15 +13,19 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.appbar.MaterialToolbar
 import com.hfad.moviewishlist.R
-import com.hfad.moviewishlist.adapters.MovieAdapter
+import com.hfad.moviewishlist.adapters.SearchMovieAdapter
 import com.hfad.moviewishlist.databinding.FragmentMovieSearchBinding
+import com.hfad.moviewishlist.model.Movie
 import com.hfad.moviewishlist.utils.Constants.Companion.SEARCH_MOVIE_TIME_DELAY
 import com.hfad.moviewishlist.utils.Resources
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment() {
+class MovieSearchFragment(
+    private val searchToolbar: MaterialToolbar,
+    private val listener: OnNavigateMovieItemClickListener
+) : Fragment(), SearchMovieAdapter.OnMovieActionListener {
     private lateinit var binding: FragmentMovieSearchBinding
     var searchMovieJob: Job? = null
 //    private lateinit var searchAdapter: MovieAdapter
@@ -29,7 +33,15 @@ class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment
     private val viewModel: MainViewModel by viewModels {
         MainViewModelFactory((requireActivity().application as MovieApplication).repository)
     }
-    private val searchAdapter: MovieAdapter by lazy { MovieAdapter() }
+    private val searchAdapterSearch: SearchMovieAdapter by lazy { SearchMovieAdapter(this) }
+
+    interface OnNavigateMovieItemClickListener {
+        fun onMovieItemClick(movie: Movie)
+    }
+
+    override fun onItemClick(movie: Movie) {
+        listener.onMovieItemClick(movie)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -38,10 +50,12 @@ class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment
         // Inflate the layout for this fragment
         binding = FragmentMovieSearchBinding.inflate(layoutInflater, container, false)
 
-        ((activity as AppCompatActivity)).menuInflater.inflate(R.menu.search_bar_menu, searchToolbar.menu)
+        ((activity as AppCompatActivity)).menuInflater.inflate(
+            R.menu.search_bar_menu,
+            searchToolbar.menu
+        )
 
         searchToolbar.setNavigationIcon(R.drawable.ic_arrow_back)
-
 
         setUpRecyclerview()
 
@@ -56,12 +70,14 @@ class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment
                 }
             }
         }
-        viewModel.searchmovie.observe(viewLifecycleOwner, Observer { response ->
-            when(response) {
+
+
+        viewModel.searchMovie.observe(viewLifecycleOwner, Observer { response ->
+            when (response) {
                 is Resources.Success -> {
                     hideProgressBor()
                     response.data?.let { movieResponse ->
-                        searchAdapter.submitList(movieResponse)
+                        searchAdapterSearch.submitList(movieResponse)
                     }
                 }
                 is Resources.Error -> {
@@ -88,11 +104,12 @@ class MovieSearchFragment(private val searchToolbar: MaterialToolbar) : Fragment
     }
 
     private fun setUpRecyclerview() {
-            binding.searchRecyclerView.apply {
-                adapter = searchAdapter
-                layoutManager = LinearLayoutManager(requireContext())
-            }
+        binding.searchRecyclerView.apply {
+            adapter = searchAdapterSearch
+            layoutManager = LinearLayoutManager(requireContext())
+        }
     }
+
 
 //    val recyclerview = binding.searchRecyclerView
 //        recyclerview.adapter = searchAdapter

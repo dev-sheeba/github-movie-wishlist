@@ -2,6 +2,7 @@ package com.hfad.moviewishlist.repository
 
 import com.hfad.moviewishlist.api.RetrofitInstance
 import com.hfad.moviewishlist.model.Movie
+import com.hfad.moviewishlist.model.SearchMoviesResponse
 import com.hfad.moviewishlist.utils.Resources
 import okhttp3.MediaType
 import okhttp3.ResponseBody
@@ -19,7 +20,7 @@ class FakeMovieRepository : MovieRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun searchMovie(searchQuery: String): Response<List<Movie>> {
+    override suspend fun searchMovie(searchQuery: String): Response<SearchMoviesResponse> {
         return if (shouldReturnNetworkError) {
             Response.error(
                 401,
@@ -29,7 +30,8 @@ class FakeMovieRepository : MovieRepository {
                 )
             )
         } else {
-            Response.success(listOf(Movie(1, "", "", "", "", 9.0)))
+//            Response.success(listOf(Movie(1, "", "", "", "", 9.0)))
+            Response.success(SearchMoviesResponse(listOf()))
         }
     }
 

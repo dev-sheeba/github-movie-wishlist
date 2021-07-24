@@ -10,11 +10,11 @@ import com.google.gson.annotations.SerializedName
 data class Movie(
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
-    val movieId: Int,
-//    @ColumnInfo(name = "is_completed")
-//    val isCompleted: Boolean,
-//    @ColumnInfo(name = "isFavourite")
-//    val isFavourite: Boolean,
+    var movieId: Int,
+    @ColumnInfo(name = "is_completed")
+    val isCompleted: Boolean = false,
+    @ColumnInfo(name = "is_favourite")
+    val isFavourite: Boolean = false,
     @SerializedName("overview")
     val overview: String,
     @SerializedName("poster_path")

@@ -1,11 +1,8 @@
 package com.hfad.moviewishlist.ui
 
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.hfad.moviewishlist.model.Movie
 import com.hfad.moviewishlist.model.SearchMoviesResponse
-import com.hfad.moviewishlist.repository.DefaultMovieRepository
 import com.hfad.moviewishlist.repository.MovieRepository
 import com.hfad.moviewishlist.utils.Resources
 import kotlinx.coroutines.Dispatchers
@@ -13,26 +10,31 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
 
-class MainViewModel(private val MovieRepository: MovieRepository) : ViewModel() {
+class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
-    val movies: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
-    val searchmovie: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
-    val getMovieImages: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
+    private val movies: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
+    val searchMovie: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
+
+    fun allMovies(): LiveData<List<Movie>> = movieRepository.readAllData().asLiveData()
+
+    fun upsert(movie: Movie) = viewModelScope.launch {
+        movieRepository.upsertMovie(movie)
+    }
 
     fun getMovies() = viewModelScope.launch {
         movies.postValue(Resources.Loading())
-        val response = MovieRepository.getMovie()
+        val response = movieRepository.getMovie()
         movies.postValue(handleMovieResponse(response))
     }
 
     fun searchMovie(searchQuery: String) = viewModelScope.launch(Dispatchers.Main.immediate) {
-        searchmovie.postValue(Resources.Loading())
+        searchMovie.postValue(Resources.Loading())
         try {
-            val response = MovieRepository.searchMovie(searchQuery)
-            searchmovie.postValue(handleSearchMovieResponse(response))
+            val response = movieRepository.searchMovie(searchQuery)
+            searchMovie.postValue(handleSearchMovieResponse(response))
         } catch (e: Exception) {
-            Timber.e(e, e.message)
-            searchmovie.postValue(Resources.Error(e.message))
+            Timber.e(e)
+            searchMovie.postValue(Resources.Error(e.message))
         }
 
     }
@@ -54,4 +56,26 @@ class MainViewModel(private val MovieRepository: MovieRepository) : ViewModel() 
         }
         return Resources.Error(response.message())
     }
+
+    fun saveMovie(movie: Movie) = viewModelScope.launch {
+        movieRepository.upsertMovie(movie)
+    }
+
+    fun onMovieIsCheckedChanged(movie: Movie, isChecked: Boolean) = viewModelScope.launch {
+        val newItem = movie.copy(isCompleted = isChecked)
+            .also { it.movieId = movie.movieId }
+        upsert(newItem)
+    }
+
+    fun delete(movie: Movie) = viewModelScope.launch {
+        movieRepository.deleteMovie(movie)
+    }
+
+    fun deleteAll() = viewModelScope.launch {
+        movieRepository.deleteAllMovies()
+    }
+
+    fun searchDatabase(searchQuery: String): LiveData<List<Movie>> =
+        movieRepository.searchDatabase(searchQuery).asLiveData()
+
 }
