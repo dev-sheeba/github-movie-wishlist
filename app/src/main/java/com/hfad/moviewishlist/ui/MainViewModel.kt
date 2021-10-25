@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Response
 import timber.log.Timber
 
-class MainViewModel(private val movieRepository: MovieRepository) : ViewModel() {
+class MLainViewModel(private val movieRepository: MovieRepository) : ViewModel() {
 
     private val movies: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()
     val searchMovie: MutableLiveData<Resources<List<Movie>>> = MutableLiveData()

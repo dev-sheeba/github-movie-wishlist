@@ -9,7 +9,7 @@ import com.hfad.moviewishlist.databinding.MovieItemBinding
 import com.hfad.moviewishlist.model.Movie
 import com.hfad.moviewishlist.ui.MovieDetailFragment
 
-class MovieHomeAdapter(private val listener: OnMovieActionListener) : ListAdapter<Movie,MovieHomeAdapter.MovieHomeViewHolder>(ListsComparator()) {
+class LMovieHomeAdapter(private val listener: OnMovieActionListener) : ListAdapter<Movie,MovieHomeAdapter.MovieHomeViewHolder>(ListsComparator()) {
 
     interface OnMovieActionListener{
         fun onCheckBoxClick(movie: Movie, isChecked: Boolean)
